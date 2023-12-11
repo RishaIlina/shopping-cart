@@ -155,6 +155,8 @@ function getProductInfo(product) {
     price: product?.querySelector('.card-price')?.textContent ?? '',
   }
   addProductsToBasketList(productInfo) // добавление товара в корзину
+
+  saveProductInStorage(productInfo) // запись товара в localStorage
 }
 
 // Функция добавления товаров в корзину
@@ -214,4 +216,19 @@ function addProductsToBasketList(product) {
   `
 
   basketItemList.appendChild(basketItem) // вставляем карточку в узел родителя
+}
+
+// Функция для сохранения в localStorage
+function saveProductInStorage(product) {
+  const products = getProductFromStorage()
+
+  products.push(product)
+
+  localStorage.setItem('products', JSON.stringify(products)) // запись данных в localStorage
+}
+
+// Функция для получения данных из localStorage
+function getProductFromStorage() {
+  // если данных нет, показываем []
+  return localStorage.getItem('products') ? JSON.parse(localStorage.getItem('products')) : []
 }
