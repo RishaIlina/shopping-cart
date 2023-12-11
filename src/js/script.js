@@ -84,3 +84,134 @@ async function loadJSON() {
     console.error('Ошибка загрузки данных:', error)
   }
 }
+
+
+// Функция создания товара через форму
+const addProduct = async () => {
+  // отдельная сущность товара
+  const productData = {
+    id: nanoid(),
+  }
+
+  // Собираем данные из формы
+  Array.from(form?.elements).forEach((element) => {
+    if (element?.name) {
+      productData[element?.name] = element?.value
+    }
+  })
+  try {
+    const response = await fetch(' http://localhost:3000/products', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(productData),
+    })
+
+    if (response.ok) {
+      console.log('Продукт успешно добавлен!')
+      form.reset()
+      loadJSON() // показываем актуальные данные
+    } else {
+      console.log('Ошибка добавления продукта.')
+    }
+  } catch (error) {
+    console.error('Ошибка', error)
+  }
+}
+
+// Функция добавления товара в корзину
+function purchaseProduct() {
+  const cards = document.querySelectorAll('.main-card') // получаем все карточки
+
+  cards.forEach((card) => {
+    const button = card.querySelector('#addToBasketButton')
+    button.addEventListener('click', () => getProductInfo(card))
+  })
+}
+
+// Функция добавления товара в избранное
+function favoriteProduct() {
+  const hearts = document.querySelectorAll('.whishlist-heart')
+
+  hearts.forEach((heart) => {
+    heart.addEventListener('click', () => {
+      heart.classList.toggle('heart-active')
+    })
+  })
+}
+
+// Функция извлечения данных из карточки на главной странице
+function getProductInfo(product) {
+  console.log('click')
+  const imgElement = product?.querySelector('.card-image img')
+  const imgSrc = imgElement ? new URL(imgElement.src).pathname : '' // для преобразования относительного пути в абсолютный
+
+  const productInfo = {
+    id: product?.dataset.cardId ?? '',
+    imgSrc: imgSrc,
+    name: product?.querySelector('.card-name')?.textContent ?? '',
+    quantity: product?.querySelector('.card-quantity')?.textContent ?? '',
+    price: product?.querySelector('.card-price')?.textContent ?? '',
+  }
+  addProductsToBasketList(productInfo) // добавление товара в корзину
+}
+
+// Функция добавления товаров в корзину
+function addProductsToBasketList(product) {
+  const basketItem = document.createElement('div')
+
+  basketItem.classList.add('basket-item')
+
+  basketItem.setAttribute('data-id', `${product?.id}`)
+
+  basketItem.innerHTML = `
+    <div class="item-card">
+      <div class="item-image">
+        <img src="${product?.imgSrc}" alt="product image">
+      </div>
+      <div class="inline-flex flex-column gap">
+        <h3 class="item-name">${product?.name}</h3>
+        <p class="item-price">${product?.price}</p>
+        <!-- Компонент степпер
+        <div class="counter">
+          <label class="counter__field">
+            <input class="counter__input" type="text" value="1" maxlength="3" readonly />
+            <span class="counter__text">шт</span>
+          </label>
+          <div class="counter__btns">
+            <button class="counter__btn counter__btn--up" aria-label="Увеличить количество">
+              <svg xmlns="http://www.w3.org/2000/svg" width="8" height="5" viewBox="0 0 8 5">
+                <g>
+                  <g>
+                    <path d="M3.904-.035L-.003 3.151 1.02 5.03l2.988-2.387 2.988 2.387 1.022-1.88-3.89-3.186z"></path>
+                  </g>
+                </g>
+              </svg>
+            </button>
+            <button disabled class="counter__btn counter__btn--down" aria-label="Уменьшить количество">
+              <svg xmlns="http://www.w3.org/2000/svg" width="8" height="5" viewBox="0 0 8 5">
+                <g>
+                  <g>
+                    <path d="M3.904 5.003L-.003 1.818 1.02-.062l2.988 2.386L6.995-.063l1.022 1.88-3.89 3.186z"></path>
+                  </g>
+                </g>
+              </svg>
+            </button>
+          </div>
+        </div> -->
+      </div>
+      <div class="inline-flex flex-column mb>
+        <div class="delete-icon" data-variant="danger-ghost" data-index="">
+          <div data-icon="icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M10 1H6V2H10V1ZM2 3V4H3V14C3 14.6 3.4 15 4 15H12C12.6 15 13 14.6 13 14V4H14V3H2ZM4 14V4H12V14H4ZM6 6H7V12H6V6ZM10 6H9V12H10V6Z" fill="#161616"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+
+  basketItemList.appendChild(basketItem) // вставляем карточку в узел родителя
+}
