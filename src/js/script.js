@@ -8,11 +8,15 @@ const panel = new Sidebar('#sidebar', '#open-basket', 'right')
 const form = document.querySelector('#productForm')
 const productList = document.querySelector('.products-list') // контейнер для отрисовки товаров на главной странице
 const basketItemList = document.querySelector('#basket-list') // контейнер для отрисовки товаров в корзине
+const basketTotalValue = document.querySelector('.basket__total-value') // итоговое значение в корзине
+const basketCountInfo = document.querySelector('.basket-count__info') // кол-во товаров (в кнопке basket)
 
 // Функция для инициализации основных функций и т.д.
 const init = async () => {
   window.addEventListener('DOMContentLoaded', async () => {
-    await loadJSON() // функция загрузки данных
+    await loadJSON() // асинхронная функция загрузки данных
+
+    loadCart() // функция загрузки данных в корзину товаров
 
     // Обработка данных формы
     form.addEventListener('submit', (e) => {
@@ -85,7 +89,6 @@ async function loadJSON() {
   }
 }
 
-
 // Функция создания товара через форму
 const addProduct = async () => {
   // отдельная сущность товара
@@ -143,7 +146,6 @@ function favoriteProduct() {
 
 // Функция извлечения данных из карточки на главной странице
 function getProductInfo(product) {
-  console.log('click')
   const imgElement = product?.querySelector('.card-image img')
   const imgSrc = imgElement ? new URL(imgElement.src).pathname : '' // для преобразования относительного пути в абсолютный
 
@@ -168,14 +170,14 @@ function addProductsToBasketList(product) {
   basketItem.setAttribute('data-id', `${product?.id}`)
 
   basketItem.innerHTML = `
-    <div class="item-card">
-      <div class="item-image">
-        <img src="${product?.imgSrc}" alt="product image">
-      </div>
-      <div class="inline-flex flex-column gap">
-        <h3 class="item-name">${product?.name}</h3>
-        <p class="item-price">${product?.price}</p>
-        <!-- Компонент степпер
+  <div class="item-card">
+    <div class="item-image">
+      <img src="${product?.imgSrc}" alt="product image">
+    </div>
+    <div class="inline-flex flex-column gap">
+      <h3 class="item-name">${product?.name}</h3>
+      <p class="item-category">${product?.category}</p>
+      <!-- Компонент степпер  -->
         <div class="counter">
           <label class="counter__field">
             <input class="counter__input" type="text" value="1" maxlength="3" readonly />
@@ -201,21 +203,80 @@ function addProductsToBasketList(product) {
               </svg>
             </button>
           </div>
-        </div> -->
-      </div>
-      <div class="inline-flex flex-column mb>
-        <div class="delete-icon" data-variant="danger-ghost" data-index="">
-          <div data-icon="icon">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M10 1H6V2H10V1ZM2 3V4H3V14C3 14.6 3.4 15 4 15H12C12.6 15 13 14.6 13 14V4H14V3H2ZM4 14V4H12V14H4ZM6 6H7V12H6V6ZM10 6H9V12H10V6Z" fill="#161616"/>
-            </svg>
-          </div>
         </div>
-      </div>
+      <button id="delete-icon" class="button close-button">
+        Удалить
+        <img src="./images/delete-icon.svg" alt="delete-icon">
+      </button>
     </div>
-  `
+    <div class="inline-flex">
+      <p class="item-price">${product?.price}</p>
+    </div>
+  </div>
+`
 
   basketItemList.appendChild(basketItem) // вставляем карточку в узел родителя
+
+  // Удаляем товар из корзины
+  const deleteButtons = document.querySelectorAll('#delete-icon')
+
+  deleteButtons.forEach((deleteButton) => {
+    deleteButton.addEventListener('click', deleteProduct) // передача функции удаления
+  })
+}
+
+// Счетчик корзины
+function updateCartInfo() {
+  const cartInfo = findCartInfo() // получение данных о товарах
+
+  basketCountInfo.textContent = cartInfo.productCount
+  basketTotalValue.textContent = cartInfo.total // передаем данные в модалку (заголовок total)
+}
+
+// Итоговая функция (total) и кол-во товаров в сайдбаре
+function findCartInfo() {
+  const products = getProductFromStorage() // получение данных
+  //const counter = document.querySelector('.basket-count__info')
+
+  const total = products.reduce((acc, product) => {
+    const price = Number.parseFloat(product.price, 10)
+    return (acc += price)
+    //counter.classList.add('active')
+  }, 0)
+
+  return {
+    total: total?.toFixed(2),
+    productCount: products?.length,
+  }
+}
+
+// Функция загрузки данных из localStorage в корзину товаров
+function loadCart() {
+  const elements = getProductFromStorage()
+
+  elements.forEach((element) => addProductsToBasketList(element))
+
+  updateCartInfo() // показ счетчика в корзине
+}
+
+// Функция удаления товара из DOM
+function deleteProduct(e) {
+  let basketItem
+
+  if (e.target.tagName === 'BUTTON') {
+    basketItem = e?.target?.parentElement?.parentElement?.parentElement // получаем родителя
+    basketItem.remove() // удаление из DOM
+  }
+
+  const products = getProductFromStorage() // получение данных из localStorage
+
+  const updateProducts = products.filter((product) => {
+    return product.id !== basketItem.dataset.id
+  })
+
+  localStorage.setItem('products', JSON.stringify(updateProducts)) // перезапись данных в LocalStorage
+
+  updateCartInfo()
 }
 
 // Функция для сохранения в localStorage
@@ -225,6 +286,8 @@ function saveProductInStorage(product) {
   products.push(product)
 
   localStorage.setItem('products', JSON.stringify(products)) // запись данных в localStorage
+
+  updateCartInfo()
 }
 
 // Функция для получения данных из localStorage
