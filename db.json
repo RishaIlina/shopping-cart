@@ -1,0 +1,68 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "Белая роза",
+      "rating": "4.9",
+      "quantity": "В наличии: 20 шт.",
+      "price": "700 ₽",
+      "imgSrc": "/images/shopping__card-candle-1.jpg"
+    },
+    {
+      "id": "2",
+      "name": "Свеча в дереве",
+      "rating": "4.8",
+      "quantity": "В наличии: 32 шт.",
+      "price": "1700 ₽",
+      "imgSrc": "/images/shopping__card-candle-13.jpg"
+    },
+    {
+      "id": "3",
+      "name": "Бутон",
+      "rating": "4.9",
+      "quantity": "В наличии: 54 шт.",
+      "price": "820 ₽",
+      "imgSrc": "/images/shopping__card-candle-9.jpg"
+    },
+    {
+      "id": "4",
+      "name": "Ранункулюс",
+      "rating": "4.7",
+      "quantity": "В наличии: 81 шт.",
+      "price": "820 ₽",
+      "imgSrc": "/images/shopping__card-candle-4.jpg"
+    },
+    {
+      "id": "5",
+      "name": "Набор макарун",
+      "rating": "4.6",
+      "quantity": "В наличии: 9 шт.",
+      "price": "1500 ₽",
+      "imgSrc": "/images/shopping__card-candle-8.jpg"
+    },
+    {
+      "id": "6",
+      "name": "Куб",
+      "rating": "4.9",
+      "quantity": "В наличии: 18 шт.",
+      "price": "500 ₽",
+      "imgSrc": "/images/shopping__card-candle-12.jpg"
+    },
+    {
+      "id": "7",
+      "name": "Набор Наслаждение",
+      "rating": "5",
+      "quantity": "В наличии: 24 шт.",
+      "price": "2500 ₽",
+      "imgSrc": "/images/shopping__card-candle-7.jpg"
+    },
+    {
+      "id": "8",
+      "name": "Цветочная симфония",
+      "rating": "4.6",
+      "quantity": "В наличии: 73 шт.",
+      "price": "600 ₽",
+      "imgSrc": "/images/shopping__card-candle-11.jpg"
+    }
+  ]
+}
