@@ -164,9 +164,7 @@ function getProductInfo(product) {
 // Функция добавления товаров в корзину
 function addProductsToBasketList(product) {
   const basketItem = document.createElement('div')
-
   basketItem.classList.add('basket-item')
-
   basketItem.setAttribute('data-id', `${product?.id}`)
 
   basketItem.innerHTML = `
@@ -176,7 +174,6 @@ function addProductsToBasketList(product) {
     </div>
     <div class="inline-flex flex-column gap">
       <h3 class="item-name">${product?.name}</h3>
-      <p class="item-category">${product?.category}</p>
       <!-- Компонент степпер  -->
         <div class="counter">
           <label class="counter__field">
@@ -214,7 +211,6 @@ function addProductsToBasketList(product) {
     </div>
   </div>
 `
-
   basketItemList.appendChild(basketItem) // вставляем карточку в узел родителя
 
   // Удаляем товар из корзины
@@ -222,6 +218,24 @@ function addProductsToBasketList(product) {
 
   deleteButtons.forEach((deleteButton) => {
     deleteButton.addEventListener('click', deleteProduct) // передача функции удаления
+  })
+
+  // Счетчик количества товара в корзине
+  const counters = document?.querySelectorAll('.counter')
+
+  counters.forEach((counter) => {
+    const counterInput = counter.querySelector('.counter__input')
+    let count = Number?.parseInt(counterInput?.value, 10)
+    const upButton = counter.querySelector('.counter__btn--up')
+    const downButton = counter.querySelector('.counter__btn--down')
+    upButton.addEventListener('click', () => {
+      count++
+      counterClick(counterInput, upButton, downButton, count)
+    })
+    downButton.addEventListener('click', () => {
+      count--
+      counterClick(counterInput, upButton, downButton, count)
+    })
   })
 }
 
@@ -236,12 +250,10 @@ function updateCartInfo() {
 // Итоговая функция (total) и кол-во товаров в сайдбаре
 function findCartInfo() {
   const products = getProductFromStorage() // получение данных
-  //const counter = document.querySelector('.basket-count__info')
 
   const total = products.reduce((acc, product) => {
     const price = Number.parseFloat(product.price, 10)
     return (acc += price)
-    //counter.classList.add('active')
   }, 0)
 
   return {
@@ -257,6 +269,7 @@ function loadCart() {
   elements.forEach((element) => addProductsToBasketList(element))
 
   updateCartInfo() // показ счетчика в корзине
+  emptyShoppingCart()
 }
 
 // Функция удаления товара из DOM
@@ -277,6 +290,7 @@ function deleteProduct(e) {
   localStorage.setItem('products', JSON.stringify(updateProducts)) // перезапись данных в LocalStorage
 
   updateCartInfo()
+  emptyShoppingCart()
 }
 
 // Функция для сохранения в localStorage
@@ -288,10 +302,35 @@ function saveProductInStorage(product) {
   localStorage.setItem('products', JSON.stringify(products)) // запись данных в localStorage
 
   updateCartInfo()
+  emptyShoppingCart()
+}
+
+// функция переключения счетчика в корзине
+function counterClick(counterInput, upButton, downButton, count) {
+  downButton.toggleAttribute('disabled', count === 1)
+  upButton?.toggleAttribute('disabled', count === 10)
+  counterInput.value = count
 }
 
 // Функция для получения данных из localStorage
 function getProductFromStorage() {
   // если данных нет, показываем []
   return localStorage.getItem('products') ? JSON.parse(localStorage.getItem('products')) : []
+}
+
+// если корзина пуста, выводим сообщение
+function emptyShoppingCart() {
+  const products = getProductFromStorage()
+  const emptyBasketText = document.querySelector('#basket-list p')
+  if (products.length === 0) {
+    if (!emptyBasketText) {
+      const emptyBasketText = document.createElement('p')
+      emptyBasketText.textContent = 'Корзина пуста'
+      basketItemList.appendChild(emptyBasketText)
+    }
+  } else {
+    if (emptyBasketText) {
+      emptyBasketText.remove()
+    }
+  }
 }
