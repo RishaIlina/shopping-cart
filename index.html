@@ -32,7 +32,7 @@
             </svg>
           </button>
 
-          <button class="btn-icon">
+          <button id="open-modal" class="btn-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z"
@@ -41,6 +41,47 @@
                 stroke-linejoin="round" />
             </svg>
           </button>
+
+          <!-- Избранное  -->
+          <dialog class="modal" id="modal-wishlist">
+            <header class="modal-header">
+              <button id="close-button" class="button close-button">
+                <svg
+                  viewBox="0 0 32 32"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                  role="presentation"
+                  focusable="false"
+                  style="
+                    display: block;
+                    fill: none;
+                    height: 16px;
+                    width: 16px;
+                    stroke: currentcolor;
+                    stroke-width: 3;
+                    overflow: visible;
+                  "
+                >
+                  <path d="m6 6 20 20"></path>
+                  <path d="m26 6-20 20"></path>
+                </svg>
+              </button>
+            </header>
+
+            <section class="modal-body">
+              <span class="modal__total-value"></span>
+
+              <div class="modal-container__list">
+                <!-- вставка добавленного товара  -->
+              </div>
+            </section>
+
+            <footer class="modal-footer"></footer>
+          </dialog>
+
+          <div class="whishlist">
+            <!-- вставка данных  -->
+          </div>
 
           <button id="open-basket" class="btn-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -118,6 +159,7 @@
   </main>
 
   <script type="module" src="src/js/script.js"></script>
+  <script type="module" src="src/js/components/modal.js"></script>
 </body>
 
 </html>
