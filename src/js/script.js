@@ -1,5 +1,6 @@
 import { Sidebar } from './components/sidebar'
 import { nanoid } from 'nanoid'
+import { getProductInfoModal } from './components/modal'
 
 // первый параметр - сайдбар,
 // второй - кнопка по клику на которую открывается сайдбар,
@@ -140,6 +141,7 @@ function favoriteProduct() {
   hearts.forEach((heart) => {
     heart.addEventListener('click', () => {
       heart.classList.toggle('heart-active')
+      getProductInfoModal()
     })
   })
 }
@@ -155,6 +157,7 @@ function getProductInfo(product) {
     name: product?.querySelector('.card-name')?.textContent ?? '',
     quantity: product?.querySelector('.card-quantity')?.textContent ?? '',
     price: product?.querySelector('.card-price')?.textContent ?? '',
+    countProduct: 1,
   }
   addProductsToBasketList(productInfo) // добавление товара в корзину
 
@@ -177,7 +180,7 @@ function addProductsToBasketList(product) {
       <!-- Компонент степпер  -->
         <div class="counter">
           <label class="counter__field">
-            <input class="counter__input" type="text" value="1" maxlength="3" readonly />
+            <input class="counter__input" type="text" value="${product?.countProduct}" maxlength="3" readonly />
             <span class="counter__text">шт</span>
           </label>
           <div class="counter__btns">
@@ -228,6 +231,7 @@ function addProductsToBasketList(product) {
     let count = Number?.parseInt(counterInput?.value, 10)
     const upButton = counter.querySelector('.counter__btn--up')
     const downButton = counter.querySelector('.counter__btn--down')
+
     upButton.addEventListener('click', () => {
       count++
       counterClick(counterInput, upButton, downButton, count)
